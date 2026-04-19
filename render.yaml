@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: studyshop-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon
+    plan: free
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://frontend-nine-eta-95.vercel.app
+      - key: PORT
+        value: 8080
