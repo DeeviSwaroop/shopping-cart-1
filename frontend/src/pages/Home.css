@@ -1,0 +1,70 @@
+.hero {
+  background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+  color: #fff;
+  padding: 64px 0;
+  text-align: center;
+}
+.hero__title { font-size: 40px; font-weight: 800; line-height: 1.25; }
+.hero__title span { color: #fbbc04; }
+.hero__sub { font-size: 18px; opacity: .85; margin: 16px 0 28px; }
+.hero__actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+.section { padding: 40px 0; }
+.section__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.section__title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
+.section__header .section__title { margin-bottom: 0; }
+.section__viewall { color: var(--primary); font-size: 14px; font-weight: 500; }
+
+/* Category cards */
+.cat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.cat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  transition: all .2s;
+}
+.cat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); text-decoration: none; }
+.cat-card__emoji { font-size: 36px; }
+.cat-card__label { font-size: 16px; font-weight: 700; color: var(--text); }
+.cat-card__sub { font-size: 13px; color: var(--text-muted); }
+
+/* Class chips */
+.class-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.class-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  transition: all .15s;
+}
+.class-chip:hover { background: var(--primary); color: #fff; border-color: var(--primary); text-decoration: none; }
+
+/* Authors */
+.authors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.author-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.author-card__emoji { font-size: 32px; }
+.author-card__name { font-size: 16px; font-weight: 700; }
+.author-card__desc { font-size: 13px; color: var(--text-muted); }

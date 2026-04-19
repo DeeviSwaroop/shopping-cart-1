@@ -1,0 +1,175 @@
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           STUDYSHOP APPLICATION                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  BROWSER  (localhost:3000)                                                  │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  React 18  +  React Router 6                                        │   │
+│  │                                                                     │   │
+│  │  Pages                         Components                           │   │
+│  │  ┌──────────────┐              ┌────────────┐  ┌────────────────┐  │   │
+│  │  │  Home        │              │  Navbar    │  │  ProductCard   │  │   │
+│  │  │  Browse      │              │  (search,  │  │  (live stock   │  │   │
+│  │  │  ProductDetail│             │  cart badge│  │   badge)       │  │   │
+│  │  │  Cart        │              │  category  │  └────────────────┘  │   │
+│  │  │  Checkout    │              │  bar)      │  ┌────────────────┐  │   │
+│  │  │  OrderHistory│              └────────────┘  │  PrivateRoute  │  │   │
+│  │  └──────────────┘                              └────────────────┘  │   │
+│  │                                                                     │   │
+│  │  Context (Global State)        Hooks                                │   │
+│  │  ┌──────────────┐  ┌────────┐  ┌──────────────────────────────┐   │   │
+│  │  │  AuthContext │  │  Cart  │  │  useInventory()              │   │   │
+│  │  │  - user      │  │Context │  │  SockJS + STOMP subscribe     │   │   │
+│  │  │  - login()   │  │- cart  │  │  /topic/inventory/{productId}│   │   │
+│  │  │  - logout()  │  │- items │  └──────────────────────────────┘   │   │
+│  │  │  - register()│  │- count │                                      │   │
+│  │  └──────────────┘  └────────┘                                      │   │
+│  │                                                                     │   │
+│  │  services/api.js  (Axios)                                          │   │
+│  │  ┌──────────────────────────────────────────────────────────┐      │   │
+│  │  │  baseURL: /api   withCredentials: true (cookie auto-send)│      │   │
+│  │  │  Interceptor: 401 → POST /auth/refresh → retry request   │      │   │
+│  │  │             : refresh expired → fire auth:logout event   │      │   │
+│  │  └──────────────────────────────────────────────────────────┘      │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  Cookies (httpOnly, not accessible to JS)                                  │
+│  ┌──────────────────────┐   ┌────────────────────────────────────┐         │
+│  │  access_token (15min)│   │  refresh_token (7 days, path=/api/ │         │
+│  │                      │   │  auth)                             │         │
+│  └──────────────────────┘   └────────────────────────────────────┘         │
+└──────────────────┬──────────────────────────────┬──────────────────────────┘
+                   │  REST  HTTP/1.1               │  WebSocket (SockJS/STOMP)
+                   │  /api/*                       │  /ws
+                   ▼                               ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  SPRING BOOT 3.2  (localhost:8080)                                          │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Security Layer                                                     │   │
+│  │  ┌──────────────┐  ┌────────────────┐  ┌──────────────────────┐   │   │
+│  │  │ JwtAuthFilter│→ │SecurityConfig  │  │UserDetailsServiceImpl│   │   │
+│  │  │ (reads cookie│  │PUBLIC:         │  │loads user by ID      │   │   │
+│  │  │  or Bearer   │  │ GET /products/*│  │from MongoDB          │   │   │
+│  │  │  header)     │  │ /auth/**       │  └──────────────────────┘   │   │
+│  │  └──────────────┘  │ /ws/**         │                             │   │
+│  │                    │PROTECTED:      │  ┌──────────────────────┐   │   │
+│  │                    │ /api/cart/**   │  │JwtUtil               │   │   │
+│  │                    │ /api/orders/** │  │generateAccessToken() │   │   │
+│  │                    └────────────────┘  │extractUserId()       │   │   │
+│  │                                        │isValid()             │   │   │
+│  │                                        └──────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Controllers (REST)                                                 │   │
+│  │  ┌─────────────────┐  ┌──────────────────┐  ┌──────────────────┐  │   │
+│  │  │  AuthController │  │ProductController │  │  CartController  │  │   │
+│  │  │  /api/auth/     │  │/api/products/    │  │  /api/cart/      │  │   │
+│  │  │  register       │  │GET ?category=    │  │  GET             │  │   │
+│  │  │  login          │  │    ?subCategory= │  │  POST /add       │  │   │
+│  │  │  logout         │  │    ?classLevel=  │  │  PUT /update     │  │   │
+│  │  │  refresh        │  │    ?search=      │  │  DELETE /remove  │  │   │
+│  │  │  me             │  │GET /featured     │  │  DELETE /clear   │  │   │
+│  │  └─────────────────┘  │GET /:id          │  └──────────────────┘  │   │
+│  │                       │GET /:id/inventory│                         │   │
+│  │  ┌─────────────────┐  └──────────────────┘                        │   │
+│  │  │  OrderController│                                               │   │
+│  │  │  /api/orders/   │                                               │   │
+│  │  │  POST /place    │                                               │   │
+│  │  │  POST /payment/ │                                               │   │
+│  │  │       confirm   │                                               │   │
+│  │  │  GET /history   │                                               │   │
+│  │  │  GET /:id       │                                               │   │
+│  │  └─────────────────┘                                               │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Services (Business Logic)                                          │   │
+│  │  ┌─────────────────────┐  ┌───────────────┐  ┌──────────────────┐ │   │
+│  │  │  CartService        │  │  OrderService │  │RefreshTokenSvc   │ │   │
+│  │  │  addItem()          │  │  createOrder  │  │createRefresh     │ │   │
+│  │  │  removeItem()       │  │  FromCart()   │  │Token()           │ │   │
+│  │  │  updateItemQty()    │  │  confirm      │  │verifyExpiration()│ │   │
+│  │  │  clearCart()        │  │  Payment()    │  │deleteByUserId()  │ │   │
+│  │  │  ↓ validates stock  │  │  ↓ deducts    │  └──────────────────┘ │   │
+│  │  │  ↓ publishes WS     │  │    stock      │                        │   │
+│  │  └─────────────────────┘  │  ↓ clears cart│                        │   │
+│  │                           │  ↓ publishes  │                        │   │
+│  │                           │    WS events  │                        │   │
+│  │                           └───────────────┘                        │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  WebSocket  (STOMP over SockJS)                                     │   │
+│  │  ┌────────────────────────────────────────────────────────────┐    │   │
+│  │  │  Endpoint: /ws                                             │    │   │
+│  │  │  Broker:   /topic                                          │    │   │
+│  │  │  Publish:  /topic/inventory/{productId}                    │    │   │
+│  │  │            → { productId, availableQty }                   │    │   │
+│  │  │  Triggered by: addItem / removeItem / updateItem           │    │   │
+│  │  │               confirmPayment (stock deduction)             │    │   │
+│  │  └────────────────────────────────────────────────────────────┘    │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │  MongoDB Java Driver 4.11
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  MONGODB  (localhost:27017)   DB: cartdb                                    │
+│                                                                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────┐  ┌──────────────────┐  │
+│  │  users       │  │  products    │  │  carts    │  │  orders          │  │
+│  │─────────────│  │─────────────│  │───────────│  │──────────────────│  │
+│  │  _id         │  │  _id         │  │  _id      │  │  _id             │  │
+│  │  name        │  │  name        │  │  userId ◄─┼──┤  userId          │  │
+│  │  email ◄─┐   │  │  category    │  │  items[]  │  │  items[]         │  │
+│  │  password│   │  │  subCategory │  │  ┌──────┐ │  │  totalAmount     │  │
+│  │  roles[] │   │  │  classLevel  │  │  │prodId│ │  │  status          │  │
+│  │  created │   │  │  subject     │  │  │qty   │ │  │  transactionId   │  │
+│  └──────────┘   │  │  author      │  │  │price │ │  │  paymentMethod   │  │
+│                 │  │  price       │  │  └──────┘ │  │  createdAt       │  │
+│  ┌──────────────┐  │  stockQty    │  │  updatedAt│  └──────────────────┘  │
+│  │refresh_tokens│  │  available   │  └───────────┘                        │
+│  │─────────────│  └──────────────┘                                        │
+│  │  token       │                                                          │
+│  │  userId      │  Seeded on first boot:                                  │
+│  │  expiryDate  │  47 products across BOOKS / STATIONERY / TOYS           │
+│  └──────────────┘  for LKG, UKG, Class 1–10                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+  KEY FLOWS
+═══════════════════════════════════════════════════════════════════════════════
+
+  AUTH FLOW
+  ─────────
+  Browser ──POST /auth/login──► Spring Boot ──bcrypt.compare──► MongoDB
+         ◄── httpOnly cookies ──                                (users)
+              access_token (15min)
+              refresh_token (7 days)
+
+  TOKEN REFRESH (silent, handled by Axios interceptor)
+  ────────────────────────────────────────────────────
+  Browser ──any API call──► 401 ──► POST /auth/refresh ──► validate refresh_token
+         ◄── new access_token cookie ──────────────────────── in MongoDB
+         ──► retry original request
+
+  ADD TO CART + REAL-TIME INVENTORY
+  ──────────────────────────────────
+  Browser ──POST /cart/add──► CartService ──check stock──► MongoDB (products)
+                                         ──save cart──► MongoDB (carts)
+                                         ──publish──► WebSocket /topic/inventory/{id}
+         ◄── all subscribers update stock badge in real-time
+
+  CHECKOUT + PAYMENT
+  ──────────────────
+  Browser ──POST /orders/place──► create Order (PENDING) ──► MongoDB (orders)
+          ──simulate payment (2s delay)──
+          ──POST /orders/payment/confirm──► set PAID/FAILED
+                                        ──► deduct stock in MongoDB
+                                        ──► publish WS inventory events
+                                        ──► clearCart in MongoDB
+          ◄── fetchCart() called ──► cart badge resets to 0
+          ──► show confirmation screen (SUCCESS ✅ / FAIL ❌)

@@ -1,0 +1,49 @@
+.checkout__title { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+.checkout__layout { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
+.checkout__section-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+.checkout__items { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.checkout-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 8px; }
+.checkout-item__name { flex: 1; font-size: 14px; }
+.checkout-item__qty { color: var(--text-muted); font-size: 13px; }
+.checkout-item__price { font-size: 14px; font-weight: 600; }
+.checkout__total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; padding-top: 12px; margin-top: 4px; }
+
+.checkout__payment { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; position: sticky; top: 100px; }
+.payment-methods { display: flex; flex-direction: column; gap: 10px; }
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all .15s;
+}
+.payment-option input[type=radio] { accent-color: var(--primary); width: 16px; height: 16px; }
+.payment-option.selected { border-color: var(--primary); background: #e8f0fe; }
+
+/* Processing & Confirmation */
+.checkout-processing { min-height: 100vh; }
+.confirmation-card {
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+.confirmation-card__icon { font-size: 64px; margin-bottom: 16px; }
+.confirmation-card__title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.confirmation-card__title.fail { color: var(--danger); }
+.confirmation-card__details { background: var(--bg); border-radius: var(--radius); padding: 20px; margin-top: 24px; text-align: left; }
+.conf-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.conf-row:last-child { border-bottom: none; }
+
+@media (max-width: 700px) {
+  .checkout__layout { grid-template-columns: 1fr; }
+  .checkout__payment { position: static; }
+}

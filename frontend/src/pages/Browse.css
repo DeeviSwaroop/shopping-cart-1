@@ -1,0 +1,31 @@
+.browse__layout { display: flex; gap: 24px; align-items: flex-start; }
+.browse__sidebar { width: 220px; flex-shrink: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; position: sticky; top: 100px; }
+.browse__main { flex: 1; min-width: 0; }
+.browse__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.browse__page-title { font-size: 20px; font-weight: 700; }
+.browse__empty { text-align: center; padding: 48px; color: var(--text-muted); }
+
+.filter-section { margin-bottom: 20px; }
+.filter-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; letter-spacing: .05em; }
+.filter-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .12s;
+}
+.filter-btn:hover { background: var(--bg); }
+.filter-btn.active { background: #e8f0fe; color: var(--primary); font-weight: 600; }
+.filter-btn--sub { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+.filter-btn--sub.active { color: var(--primary); }
+
+@media (max-width: 700px) {
+  .browse__layout { flex-direction: column; }
+  .browse__sidebar { width: 100%; position: static; }
+}
