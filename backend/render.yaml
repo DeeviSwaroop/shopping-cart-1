@@ -1,0 +1,17 @@
+# Render Blueprint — backend service
+services:
+  - type: web
+    name: studyshop-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    plan: free
+    envVars:
+      - key: MONGODB_URI
+        sync: false          # you'll set this manually in Render dashboard
+      - key: JWT_SECRET
+        generateValue: true  # Render auto-generates a random secret
+      - key: FRONTEND_URL
+        sync: false          # set to your Vercel frontend URL
+      - key: PORT
+        value: 8080

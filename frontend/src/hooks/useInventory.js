@@ -13,8 +13,9 @@ export function useInventory(productIds = []) {
   useEffect(() => {
     if (productIds.length === 0) return;
 
+    const wsBase = process.env.REACT_APP_WS_URL || '';
     const client = new Client({
-      webSocketFactory: () => new SockJS('/ws'),
+      webSocketFactory: () => new SockJS(`${wsBase}/ws`),
       reconnectDelay: 5000,
       onConnect: () => {
         productIds.forEach((id) => {
