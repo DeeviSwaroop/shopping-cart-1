@@ -17,36 +17,79 @@
 
 ## Pre-requisites
 
+### macOS
+
 - **Java 17** – `brew install openjdk@17`
 - **Maven 3.9+** – `brew install maven`
 - **Node 18+** – `brew install node`
-- **MongoDB** – `brew install mongodb-community` and `brew services start mongodb-community`
+- **MongoDB 7+** – `brew install mongodb-community` and `brew services start mongodb-community`
+
+### Windows
+
+- **Java 17** – Download and install from [Adoptium](https://adoptium.net/) or [Oracle](https://www.oracle.com/java/technologies/downloads/#java17). Add `JAVA_HOME` to your environment variables.
+- **Maven 3.9+** – Download from [maven.apache.org](https://maven.apache.org/download.cgi), extract, and add the `bin` folder to your `PATH`.
+- **Node 18+** – Download the Windows installer from [nodejs.org](https://nodejs.org/).
+- **MongoDB 7+** – Download and install [MongoDB Community Server](https://www.mongodb.com/try/download/community). Optionally install as a Windows service during setup, or start manually with `mongod`.
+
+> **Verify installations (both OS):**
+> ```bash
+> java -version && mvn -v && node -v && npm -v && mongod --version
+> ```
 
 ---
 
 ## Running the Application
 
 ### 1. Start MongoDB
+
+**macOS**
 ```bash
 brew services start mongodb-community
 ```
 
+**Windows (if not installed as a service)**
+```powershell
+# Open a terminal and run:
+mongod --dbpath "C:\data\db"
+```
+> Create the `C:\data\db` folder first if it doesn't exist: `mkdir C:\data\db`
+
 ### 2. Start Backend (Spring Boot)
+
+**macOS**
 ```bash
 cd backend
 export JAVA_HOME="$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"
 mvn spring-boot:run
 ```
+
+**Windows (PowerShell)**
+```powershell
+cd backend
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17"   # adjust to your install path
+mvn spring-boot:run
+```
+
+**Windows (Command Prompt)**
+```cmd
+cd backend
+set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17
+mvn spring-boot:run
+```
+
 The API starts on **http://localhost:8080**.  
 On first boot, ~50 seed products (books, stationery, toys) are inserted automatically.
 
 ### 3. Start Frontend (React)
+
 ```bash
 cd frontend
 npm install
 npm start
 ```
 Opens **http://localhost:3000**. Proxies `/api` requests to `:8080`.
+
+> Works the same on macOS and Windows.
 
 ---
 
